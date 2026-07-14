@@ -1,0 +1,281 @@
+{%- comment -%}
+  Fresh Seal — Tabbed comparison
+  Tabs: Why Fresh Seal? | Us vs Them | What's Included | Benefits
+  Content switches on click (no reload). Fully editable via blocks.
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --fs-accent: {{ section.settings.accent_color }};
+    --fs-accent-dark: {{ section.settings.accent_color_dark }};
+    --fs-text: {{ section.settings.text_color }};
+    --fs-bg: {{ section.settings.bg_color }};
+    --fs-card: {{ section.settings.card_color }};
+  }
+  .fs-tabs-{{ section.id }} {
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    padding: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+    font-family: 'Helvetica Neue', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__head {
+    text-align: center;
+    max-width: 40em;
+    margin: 0 auto 28px;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin: 0 0 10px;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__intro { font-size: 16px; opacity: .8; margin: 0; }
+  .fs-tabs-{{ section.id }} .fs-tabs__nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px;
+    margin: 0 0 24px;
+    background: var(--fs-card);
+    border-radius: 14px;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__nav::-webkit-scrollbar { display: none; }
+  .fs-tabs-{{ section.id }} .fs-tabs__btn {
+    flex: 1 0 auto;
+    min-height: 46px;
+    padding: 0 18px;
+    border: none;
+    background: transparent;
+    color: var(--fs-text);
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .18s ease, color .18s ease;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__btn[aria-selected="true"] {
+    background: var(--fs-accent);
+    color: #fff;
+  }
+  .fs-tabs-{{ section.id }} .fs-tabs__panel { display: none; }
+  .fs-tabs-{{ section.id }} .fs-tabs__panel.is-active { display: block; animation: fs-fade-{{ section.id }} .25s ease; }
+  @keyframes fs-fade-{{ section.id }} { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* Generic bullet list content */
+  .fs-tabs-{{ section.id }} .fs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .fs-tabs-{{ section.id }} .fs-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.5; }
+  .fs-tabs-{{ section.id }} .fs-list li strong { display: block; }
+  .fs-tabs-{{ section.id }} .fs-list svg { flex: none; margin-top: 3px; }
+
+  /* Comparison table (Us vs Them) */
+  .fs-tabs-{{ section.id }} .fs-cmp { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .fs-tabs-{{ section.id }} .fs-cmp th, .fs-tabs-{{ section.id }} .fs-cmp td { padding: 14px 12px; text-align: center; border-bottom: 1px solid rgba(0,0,0,.08); }
+  .fs-tabs-{{ section.id }} .fs-cmp th:first-child, .fs-tabs-{{ section.id }} .fs-cmp td:first-child { text-align: left; font-weight: 600; }
+  .fs-tabs-{{ section.id }} .fs-cmp thead th { font-weight: 800; font-size: 14px; }
+  .fs-tabs-{{ section.id }} .fs-cmp .fs-us { background: rgba(45,157,120,.07); color: var(--fs-accent-dark); font-weight: 800; }
+  .fs-tabs-{{ section.id }} .fs-cmp .yes { color: var(--fs-accent); font-weight: 800; }
+  .fs-tabs-{{ section.id }} .fs-cmp .no { opacity: .4; }
+  .fs-tabs-{{ section.id }} .fs-cmp-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  .fs-tabs-{{ section.id }} .fs-panel-note {
+    margin: 18px 0 0; padding: 14px 16px; border-radius: 12px;
+    background: rgba(45,157,120,.08); color: var(--fs-accent-dark);
+    font-size: 14px; font-weight: 600;
+  }
+  @media screen and (min-width: 750px) {
+    .fs-tabs-{{ section.id }} .fs-tabs__title { font-size: 34px; }
+    .fs-tabs-{{ section.id }} .fs-tabs__nav { max-width: 720px; margin-left: auto; margin-right: auto; }
+    .fs-tabs-{{ section.id }} .fs-tabs__btn { flex: 1 1 0; }
+    .fs-tabs-{{ section.id }} .fs-tabs__panel-inner { max-width: 760px; margin: 0 auto; }
+  }
+{%- endstyle -%}
+
+<div class="fs-tabs-{{ section.id }}" id="fs-tabs-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank or section.settings.intro != blank -%}
+      <div class="fs-tabs__head">
+        {%- if section.settings.title != blank -%}<h2 class="fs-tabs__title">{{ section.settings.title }}</h2>{%- endif -%}
+        {%- if section.settings.intro != blank -%}<p class="fs-tabs__intro">{{ section.settings.intro }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="fs-tabs__nav" role="tablist" aria-label="Comparison tabs">
+      {%- for block in section.blocks -%}
+        <button
+          type="button"
+          class="fs-tabs__btn"
+          role="tab"
+          id="fs-tab-{{ section.id }}-{{ forloop.index }}"
+          aria-controls="fs-panel-{{ section.id }}-{{ forloop.index }}"
+          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          {{ block.shopify_attributes }}
+        >{{ block.settings.tab_label }}</button>
+      {%- endfor -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      <div
+        class="fs-tabs__panel{% if forloop.first %} is-active{% endif %}"
+        id="fs-panel-{{ section.id }}-{{ forloop.index }}"
+        role="tabpanel"
+        aria-labelledby="fs-tab-{{ section.id }}-{{ forloop.index }}"
+        {% unless forloop.first %}hidden{% endunless %}
+      >
+        <div class="fs-tabs__panel-inner">
+          {%- case block.type -%}
+
+            {%- when 'compare' -%}
+              <div class="fs-cmp-wrap">
+                <table class="fs-cmp">
+                  <thead>
+                    <tr>
+                      <th>{{ block.settings.col_feature }}</th>
+                      <th class="fs-us">{{ block.settings.col_us }}</th>
+                      <th>{{ block.settings.col_them }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {%- assign rows = block.settings.rows | newline_to_br | split: '<br />' -%}
+                    {%- for row in rows -%}
+                      {%- assign cells = row | strip | split: '|' -%}
+                      {%- if cells.size >= 3 -%}
+                        <tr>
+                          <td>{{ cells[0] | strip }}</td>
+                          <td class="fs-us">{%- assign u = cells[1] | strip | downcase -%}{%- if u == 'yes' -%}<span class="yes">✓</span>{%- elsif u == 'no' -%}<span class="no">✕</span>{%- else -%}{{ cells[1] | strip }}{%- endif -%}</td>
+                          <td>{%- assign t = cells[2] | strip | downcase -%}{%- if t == 'yes' -%}<span class="yes">✓</span>{%- elsif t == 'no' -%}<span class="no">✕</span>{%- else -%}{{ cells[2] | strip }}{%- endif -%}</td>
+                        </tr>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </tbody>
+                </table>
+              </div>
+
+            {%- else -%}
+              {%- assign items = block.settings.items | newline_to_br | split: '<br />' -%}
+              <ul class="fs-list">
+                {%- for item in items -%}
+                  {%- assign parts = item | strip | split: '::' -%}
+                  {%- if parts.size > 0 and parts[0] != blank -%}
+                    <li>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6 9 17l-5-5" stroke="{{ section.settings.accent_color }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      <span>
+                        {%- if parts.size > 1 -%}<strong>{{ parts[0] | strip }}</strong>{{ parts[1] | strip }}{%- else -%}{{ parts[0] | strip }}{%- endif -%}
+                      </span>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+
+          {%- endcase -%}
+
+          {%- if block.settings.note != blank -%}
+            <p class="fs-panel-note">{{ block.settings.note }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('fs-tabs-{{ section.id }}');
+    if (!root) return;
+    var tabs = root.querySelectorAll('.fs-tabs__btn');
+    var panels = root.querySelectorAll('.fs-tabs__panel');
+    function activate(i) {
+      tabs.forEach(function (t, idx) { t.setAttribute('aria-selected', idx === i ? 'true' : 'false'); });
+      panels.forEach(function (p, idx) {
+        var on = idx === i;
+        p.classList.toggle('is-active', on);
+        if (on) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', ''); }
+      });
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { activate(i); });
+      t.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          var next = e.key === 'ArrowRight' ? (i + 1) % tabs.length : (i - 1 + tabs.length) % tabs.length;
+          tabs[next].focus(); activate(next);
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Fresh Seal — Tabbed comparison",
+  "tag": "section",
+  "class": "fs-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section title", "default": "Everything you want to know, in one tap" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Tap through the details — no scrolling, no fluff." },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "accent_color", "label": "Accent (green)", "default": "#2D9D78" },
+    { "type": "color", "id": "accent_color_dark", "label": "Accent dark", "default": "#248063" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#F5F5F5" },
+    { "type": "color", "id": "card_color", "label": "Tab bar background", "default": "#FFFFFF" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding", "default": 72 }
+  ],
+  "blocks": [
+    {
+      "type": "list_tab",
+      "name": "Tab — bullet list",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Why Fresh Seal?" },
+        { "type": "textarea", "id": "items", "label": "Items (one per line, use :: to bold a lead-in)", "info": "Example line: Restaurant-grade seal::locks freshness in seconds.", "default": "5× longer freshness::vacuum-seal meat, cheese and leftovers in seconds.\nStops freezer burn::no more binned groceries at the end of the month.\nOne machine, 4 jobs::seal, marinate, seal bags, open bottles." },
+        { "type": "text", "id": "note", "label": "Highlight note (optional)" }
+      ]
+    },
+    {
+      "type": "compare",
+      "name": "Tab — Us vs Them table",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Us vs Them" },
+        { "type": "text", "id": "col_feature", "label": "Column 1 heading", "default": "Feature" },
+        { "type": "text", "id": "col_us", "label": "Column 2 heading (you)", "default": "Fresh Seal" },
+        { "type": "text", "id": "col_them", "label": "Column 3 heading (them)", "default": "Cheap sealers" },
+        { "type": "textarea", "id": "rows", "label": "Rows (Feature | You | Them — one per line)", "info": "Use 'yes' / 'no' for ticks, or type any short text.", "default": "4-in-1 functionality | yes | no\nStrong double-seal strip | yes | no\n51 bags included | yes | no\n12-month warranty | yes | 30 days\nSA-based support | yes | no" },
+        { "type": "text", "id": "note", "label": "Highlight note (optional)", "default": "Priced like a starter sealer. Built like a premium one." }
+      ]
+    },
+    {
+      "type": "included",
+      "name": "Tab — What's included",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "What's Included" },
+        { "type": "textarea", "id": "items", "label": "Items (one per line, use :: to bold a lead-in)", "default": "Fresh Seal 4-in-1 machine::vacuum, seal, marinate & bottle-stopper.\n51 vacuum-seal bags::a full month of sealing, ready to go.\nBottle stopper + accessory hose::for wine, oils and liquids.\nQuick-start guide::sealing in under 2 minutes, out of the box." },
+        { "type": "text", "id": "note", "label": "Highlight note (optional)" }
+      ]
+    },
+    {
+      "type": "benefits",
+      "name": "Tab — Benefits",
+      "settings": [
+        { "type": "text", "id": "tab_label", "label": "Tab label", "default": "Benefits" },
+        { "type": "textarea", "id": "items", "label": "Items (one per line, use :: to bold a lead-in)", "default": "Save on groceries::buy in bulk, seal portions, waste nothing.\nPrecision portioning::the 12cm seal is ideal for single-serve meal prep.\nMeal-prep in minutes::marinate meat in 12 minutes, not overnight.\nTidy fridge & freezer::flat, stackable, labelled — everything findable." },
+        { "type": "text", "id": "note", "label": "Highlight note (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fresh Seal — Tabbed comparison",
+      "blocks": [
+        { "type": "list_tab" },
+        { "type": "compare" },
+        { "type": "included" },
+        { "type": "benefits" }
+      ]
+    }
+  ]
+}
+{% endschema %}

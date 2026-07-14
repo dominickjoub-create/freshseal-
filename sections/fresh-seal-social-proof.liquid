@@ -1,0 +1,156 @@
+{%- comment -%}
+  Fresh Seal — Social proof (big stats + testimonial cards)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --fs-accent: {{ section.settings.accent_color }};
+    --fs-text: {{ section.settings.text_color }};
+    --fs-bg: {{ section.settings.bg_color }};
+    --fs-card: {{ section.settings.card_color }};
+  }
+  .fs-proof-{{ section.id }} {
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    padding: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+    font-family: 'Helvetica Neue', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .fs-proof-{{ section.id }} .fs-proof__head { text-align: center; max-width: 36em; margin: 0 auto 32px; }
+  .fs-proof-{{ section.id }} .fs-proof__title { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+  .fs-proof-{{ section.id }} .fs-proof__intro { font-size: 16px; opacity: .8; margin: 0; }
+  .fs-proof-{{ section.id }} .fs-stats {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 0 0 36px;
+  }
+  .fs-proof-{{ section.id }} .fs-stat {
+    text-align: center; padding: 22px 12px; background: var(--fs-card); border-radius: 16px;
+  }
+  .fs-proof-{{ section.id }} .fs-stat__num { font-size: 38px; font-weight: 800; letter-spacing: -.02em; color: var(--fs-accent); line-height: 1; }
+  .fs-proof-{{ section.id }} .fs-stat__label { font-size: 13px; font-weight: 600; opacity: .75; margin-top: 8px; }
+  .fs-proof-{{ section.id }} .fs-quotes { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .fs-proof-{{ section.id }} .fs-quote {
+    background: var(--fs-card); border-radius: 16px; padding: 22px 20px; border: 1px solid rgba(0,0,0,.05);
+  }
+  .fs-proof-{{ section.id }} .fs-quote__stars { color: var(--fs-accent); font-size: 15px; letter-spacing: 2px; margin-bottom: 10px; }
+  .fs-proof-{{ section.id }} .fs-quote__text { font-size: 16px; line-height: 1.55; margin: 0 0 14px; }
+  .fs-proof-{{ section.id }} .fs-quote__who { display: flex; align-items: center; gap: 10px; }
+  .fs-proof-{{ section.id }} .fs-quote__avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--fs-accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex: none; overflow: hidden; }
+  .fs-proof-{{ section.id }} .fs-quote__avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .fs-proof-{{ section.id }} .fs-quote__name { font-weight: 700; font-size: 14px; }
+  .fs-proof-{{ section.id }} .fs-quote__loc { font-size: 13px; opacity: .6; }
+  .fs-proof-{{ section.id }} .fs-quote__badge { font-size: 12px; font-weight: 700; color: var(--fs-accent); margin-left: auto; }
+  @media screen and (min-width: 750px) {
+    .fs-proof-{{ section.id }} .fs-proof__title { font-size: 34px; }
+    .fs-proof-{{ section.id }} .fs-stats { grid-template-columns: repeat({{ section.settings.stat_columns }}, 1fr); }
+    .fs-proof-{{ section.id }} .fs-quotes { grid-template-columns: repeat({{ section.settings.quote_columns }}, 1fr); }
+    .fs-proof-{{ section.id }} .fs-stat__num { font-size: 44px; }
+  }
+{%- endstyle -%}
+
+<div class="fs-proof-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank or section.settings.intro != blank -%}
+      <div class="fs-proof__head">
+        {%- if section.settings.title != blank -%}<h2 class="fs-proof__title">{{ section.settings.title }}</h2>{%- endif -%}
+        {%- if section.settings.intro != blank -%}<p class="fs-proof__intro">{{ section.settings.intro }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign stat_blocks = section.blocks | where: 'type', 'stat' -%}
+    {%- if stat_blocks.size > 0 -%}
+      <div class="fs-stats">
+        {%- for block in stat_blocks -%}
+          <div class="fs-stat" {{ block.shopify_attributes }}>
+            <div class="fs-stat__num">{{ block.settings.number }}</div>
+            <div class="fs-stat__label">{{ block.settings.label }}</div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- assign quote_blocks = section.blocks | where: 'type', 'testimonial' -%}
+    {%- if quote_blocks.size > 0 -%}
+      <div class="fs-quotes">
+        {%- for block in quote_blocks -%}
+          <figure class="fs-quote" {{ block.shopify_attributes }}>
+            {%- if block.settings.stars != blank -%}
+              <div class="fs-quote__stars">{% assign s = block.settings.stars | plus: 0 %}{% for i in (1..5) %}{% if i <= s %}★{% else %}☆{% endif %}{% endfor %}</div>
+            {%- endif -%}
+            <blockquote class="fs-quote__text">{{ block.settings.quote }}</blockquote>
+            <figcaption class="fs-quote__who">
+              <span class="fs-quote__avatar">
+                {%- if block.settings.avatar != blank -%}
+                  {{ block.settings.avatar | image_url: width: 76 | image_tag: loading: 'lazy', alt: block.settings.name | escape }}
+                {%- else -%}
+                  {{ block.settings.name | slice: 0 | upcase }}
+                {%- endif -%}
+              </span>
+              <span>
+                <span class="fs-quote__name">{{ block.settings.name }}</span><br>
+                <span class="fs-quote__loc">{{ block.settings.location }}</span>
+              </span>
+              {%- if block.settings.verified -%}<span class="fs-quote__badge">✓ Verified</span>{%- endif -%}
+            </figcaption>
+          </figure>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Fresh Seal — Social proof",
+  "tag": "section",
+  "class": "fs-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section title", "default": "Loved across South Africa" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Real kitchens, real savings — here's what customers say." },
+    { "type": "range", "id": "stat_columns", "min": 2, "max": 4, "step": 1, "label": "Stat columns (desktop)", "default": 4 },
+    { "type": "range", "id": "quote_columns", "min": 1, "max": 3, "step": 1, "label": "Testimonial columns (desktop)", "default": 3 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "accent_color", "label": "Accent (green)", "default": "#2D9D78" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#F5F5F5" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Big number", "default": "96%" },
+        { "type": "text", "id": "label", "label": "Label", "default": "would buy again" }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "range", "id": "stars", "min": 1, "max": 5, "step": 1, "label": "Star rating", "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "Cuts our grocery waste to nearly zero. Bulk-buy meat, seal in portions, done." },
+        { "type": "image_picker", "id": "avatar", "label": "Avatar (optional)" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Thandi M." },
+        { "type": "text", "id": "location", "label": "Location", "default": "Cape Town" },
+        { "type": "checkbox", "id": "verified", "label": "Show 'Verified' badge", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fresh Seal — Social proof",
+      "blocks": [
+        { "type": "stat", "settings": { "number": "96%", "label": "would buy again" } },
+        { "type": "stat", "settings": { "number": "4.9★", "label": "average rating" } },
+        { "type": "stat", "settings": { "number": "5×", "label": "longer freshness" } },
+        { "type": "stat", "settings": { "number": "12,000+", "label": "SA kitchens sealed" } },
+        { "type": "testimonial", "settings": { "name": "Thandi M.", "location": "Cape Town" } },
+        { "type": "testimonial", "settings": { "quote": "Worth every rand. Freezer burn is a thing of the past and my braai meat lasts for weeks.", "name": "Sipho D.", "location": "Johannesburg" } },
+        { "type": "testimonial", "settings": { "quote": "Set-up took two minutes. The 51 bags lasted us over a month of meal prep.", "name": "Elmarie V.", "location": "Durban" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,394 @@
+{% doc %}
+  @prompt
+    Cover photo
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-cover-photo-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.height_desktop }}px;
+    overflow: hidden;
+    display: flex;
+    align-items: {{ block.settings.content_alignment }};
+    justify-content: {{ block.settings.content_position }};
+  }
+
+  .ai-cover-photo-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+  .ai-cover-photo-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .ai-cover-photo-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 200px;
+    opacity: 0.5;
+  }
+
+  .ai-cover-photo-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-cover-photo-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+  }
+
+  .ai-cover-photo-content-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 3;
+    text-align: {{ block.settings.text_alignment }};
+    color: {{ block.settings.text_color }};
+    padding: 40px 20px;max-width: {{ block.settings.content_width }}px;
+    width: 100%;
+  }
+
+  .ai-cover-photo-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+
+  .ai-cover-photo-subheading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subheading_size }}px;
+    margin: 0 0 24px;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  .ai-cover-photo-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-cover-photo-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-cover-photo-{{ ai_gen_id }} {
+      height: {{ block.settings.height_mobile }}px;
+    }
+
+    .ai-cover-photo-content-{{ ai_gen_id }} {
+      padding: 20px 16px;
+    }
+
+    .ai-cover-photo-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.8 }}px;
+    }
+
+    .ai-cover-photo-subheading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subheading_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}<div class="ai-cover-photo-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.image %}
+    <img
+      src="{{ block.settings.image | image_url: width: 2000 }}"
+      alt="{{ block.settings.image.alt | escape }}"
+      class="ai-cover-photo-image-{{ ai_gen_id }}"
+      loading="lazy"
+      width="{{ block.settings.image.width }}"
+      height="{{ block.settings.image.height }}"
+    >
+  {% else %}
+    <div class="ai-cover-photo-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}<div class="ai-cover-photo-empty-state-{{ ai_gen_id }}">
+        Add a cover photo to get started
+      </div>
+    </div>
+  {% endif %}
+
+  {% if block.settings.show_overlay %}
+    <div class="ai-cover-photo-overlay-{{ ai_gen_id }}"></div>
+  {% endif %}
+
+  {% if block.settings.heading != blank or block.settings.subheading != blank or block.settings.button_text != blank %}
+    <div class="ai-cover-photo-content-{{ ai_gen_id }}">
+      {% if block.settings.heading != blank %}
+        <h1 class="ai-cover-photo-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h1>
+      {% endif %}
+
+      {% if block.settings.subheading != blank %}
+        <p class="ai-cover-photo-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+      {% endif %}
+
+      {% if block.settings.button_text != blank and block.settings.button_link != blank %}
+        <a href="{{ block.settings.button_link }}" class="ai-cover-photo-button-{{ ai_gen_id }}">
+          {{ block.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Cover photo",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Cover image"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Desktop height",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Mobile height",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Show overlay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our amazing collection of products"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Middle"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Content width",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cover photo"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}
