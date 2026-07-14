@@ -1,0 +1,84 @@
+{
+  "sections": {
+    "fs_hero": {
+      "type": "fresh-seal-hero",
+      "blocks": {
+        "h1": { "type": "trust_point", "settings": { "text": "Ships from SA" } },
+        "h2": { "type": "trust_point", "settings": { "text": "30-day money-back" } },
+        "h3": { "type": "trust_point", "settings": { "text": "Works with any bag" } }
+      },
+      "block_order": ["h1", "h2", "h3"],
+      "settings": {}
+    },
+    "fs_trust": {
+      "type": "fresh-seal-trust-strip",
+      "blocks": {
+        "b1": { "type": "item", "settings": { "icon": "truck", "title": "Ships from SA", "description": "No customs, no surprises" } },
+        "b2": { "type": "item", "settings": { "icon": "star", "title": "Free shipping R700+", "description": "Nationwide, 2–4 days" } },
+        "b3": { "type": "item", "settings": { "icon": "refresh", "title": "30-day money-back", "description": "Love it or return it" } },
+        "b4": { "type": "item", "settings": { "icon": "shield", "title": "12-month warranty", "description": "Covered, no fine print" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": {}
+    },
+    "fs_tabs": {
+      "type": "fresh-seal-tabbed-comparison",
+      "blocks": {
+        "t1": { "type": "text_tab", "settings": {} },
+        "t2": { "type": "compare", "settings": {} },
+        "t3": { "type": "included", "settings": {} },
+        "t4": { "type": "benefits", "settings": {} }
+      },
+      "block_order": ["t1", "t2", "t3", "t4"],
+      "settings": {}
+    },
+    "fs_carousel": {
+      "type": "fresh-seal-carousel",
+      "blocks": {
+        "c1": { "type": "card", "settings": { "badge": "Best seller", "title": "Starter Bundle", "components": "1 | Fresh Seal Machine\n51 | Vacuum Bags", "price": "R599", "compare_price": "R799", "save_line": "Save R200 vs buying separate", "rating": 5, "reviews": "", "cta_label": "Add to cart" } },
+        "c2": { "type": "card", "settings": { "badge": "Best value", "title": "Free-Shipping Bundle", "components": "1 | Fresh Seal Machine\n101 | Vacuum Bags", "price": "R748", "compare_price": "R948", "save_line": "Unlocks FREE shipping (over R700)", "rating": 5, "reviews": "", "cta_label": "Add to cart" } },
+        "c3": { "type": "card", "settings": { "badge": "Top up", "title": "Bag Refill Pack", "components": "50 | Vacuum Bags", "price": "R149", "save_line": "Works with any sealer", "rating": 0, "cta_label": "Add to cart" } }
+      },
+      "block_order": ["c1", "c2", "c3"],
+      "settings": {}
+    },
+    "fs_proof": {
+      "type": "fresh-seal-social-proof",
+      "blocks": {
+        "s1": { "type": "stat", "settings": { "number": "96%", "label": "say food stays fresh longer" } },
+        "s2": { "type": "stat", "settings": { "number": "5★", "label": "average rating — add your review count" } },
+        "s3": { "type": "stat", "settings": { "number": "5,000+", "label": "Fresh Seals in SA kitchens" } },
+        "q1": { "type": "testimonial", "settings": { "quote": "Your customer's real review goes here.", "name": "Name", "location": "City" } }
+      },
+      "block_order": ["s1", "s2", "s3", "q1"],
+      "settings": {}
+    },
+    "fs_modes": {
+      "type": "fresh-seal-modes",
+      "blocks": {
+        "m1": { "type": "mode", "settings": { "icon": "vacuum", "title": "Vacuum & Seal", "description": "One press. Air out, sealed tight. Your default for meat, cheese and leftovers." } },
+        "m2": { "type": "mode", "settings": { "icon": "seal", "title": "Seal Only", "description": "Reseal chip packets and open bags — no vacuum, just a clean seal." } },
+        "m3": { "type": "mode", "settings": { "icon": "pulse", "title": "Pulse Vacuum", "description": "You control the suction. Perfect for soft foods — no crushed bread or biltong crumbs." } },
+        "m4": { "type": "mode", "settings": { "icon": "jar", "title": "Jar & Container", "description": "Vacuum jars, canisters and bottles with the included hose. Wine stays good for weeks." } }
+      },
+      "block_order": ["m1", "m2", "m3", "m4"],
+      "settings": {}
+    },
+    "fs_bundle": {
+      "type": "fresh-seal-bundle-offer",
+      "settings": {}
+    },
+    "fs_faq": {
+      "type": "fresh-seal-faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": { "question": "Does it work with any bag?", "answer": "<p>Yes. Any bag, roll or pouch — textured, embossed, generic, whatever's cheapest at Makro. You're never locked into branded refills.</p>" } },
+        "f2": { "type": "faq", "settings": { "question": "What about the 12cm seal width?", "answer": "<p>That's precision portioning, not a limit. 12cm is ideal for single servings, braai packs and meal prep — portions seal flat, stack neatly and defrost only what you need.</p>" } },
+        "f3": { "type": "faq", "settings": { "question": "How long does shipping take?", "answer": "<p>We ship from South Africa — no customs, no surprises. Most orders arrive within 2–4 working days, and shipping is FREE over R700.</p>" } },
+        "f4": { "type": "faq", "settings": { "question": "What's your return policy?", "answer": "<p>30-day money-back guarantee, plus a 12-month warranty. If it's not for you, send it back and we'll refund you — no forms, no fights.</p>" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {}
+    }
+  },
+  "order": ["fs_hero", "fs_trust", "fs_tabs", "fs_carousel", "fs_proof", "fs_modes", "fs_bundle", "fs_faq"]
+}

@@ -1,0 +1,124 @@
+{%- comment -%}
+  Fresh Seal — Social proof
+  One grid, blocks in any order: big green stat cards + testimonial cards.
+  Mobile: 2x2. Desktop: 2 or 4 columns. All copy editable — replace the
+  placeholder stats/quotes with your real numbers and reviews.
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --fs-accent: {{ section.settings.accent_color }};
+    --fs-text: {{ section.settings.text_color }};
+    --fs-bg: {{ section.settings.bg_color }};
+    --fs-card: {{ section.settings.card_color }};
+  }
+  .fs-proof-{{ section.id }} {
+    background: var(--fs-bg);
+    color: var(--fs-text);
+    padding: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+    font-family: 'Helvetica Neue', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .fs-proof-{{ section.id }} .fs-proof__head { text-align: center; max-width: 36em; margin: 0 auto 28px; }
+  .fs-proof-{{ section.id }} .fs-proof__title { font-size: 26px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 8px; text-transform: uppercase; }
+  .fs-proof-{{ section.id }} .fs-proof__intro { font-size: 15px; color: #555; margin: 0; }
+  .fs-proof-{{ section.id }} .fs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .fs-proof-{{ section.id }} .fs-cell {
+    background: var(--fs-card); border: 1px solid #ececec; border-radius: 16px;
+    padding: 24px 18px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .fs-proof-{{ section.id }} .fs-stat__num { font-size: 36px; font-weight: 800; letter-spacing: -.02em; color: var(--fs-accent); line-height: 1.05; }
+  .fs-proof-{{ section.id }} .fs-stat__label { font-size: 13.5px; font-weight: 600; color: #555; margin-top: 8px; line-height: 1.4; }
+  .fs-proof-{{ section.id }} .fs-quote__stars { color: var(--fs-accent); font-size: 15px; letter-spacing: 2px; margin-bottom: 8px; }
+  .fs-proof-{{ section.id }} .fs-quote__text { font-size: 15px; line-height: 1.5; font-weight: 600; margin: 0 0 10px; }
+  .fs-proof-{{ section.id }} .fs-quote__who { font-size: 13px; color: #555; }
+  .fs-proof-{{ section.id }} .fs-quote__who b { color: var(--fs-text); }
+  @media screen and (min-width: 750px) {
+    .fs-proof-{{ section.id }} .fs-proof__title { font-size: 32px; }
+    .fs-proof-{{ section.id }} .fs-grid { grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: 18px; }
+    .fs-proof-{{ section.id }} .fs-cell { padding: 30px 24px; }
+    .fs-proof-{{ section.id }} .fs-stat__num { font-size: 44px; }
+  }
+{%- endstyle -%}
+
+<div class="fs-proof-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank or section.settings.intro != blank -%}
+      <div class="fs-proof__head">
+        {%- if section.settings.title != blank -%}<h2 class="fs-proof__title">{{ section.settings.title }}</h2>{%- endif -%}
+        {%- if section.settings.intro != blank -%}<p class="fs-proof__intro">{{ section.settings.intro }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="fs-grid">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'stat' -%}
+            <div class="fs-cell" {{ block.shopify_attributes }}>
+              <div class="fs-stat__num">{{ block.settings.number }}</div>
+              <div class="fs-stat__label">{{ block.settings.label }}</div>
+            </div>
+          {%- when 'testimonial' -%}
+            <figure class="fs-cell" style="margin:0" {{ block.shopify_attributes }}>
+              {%- if block.settings.stars > 0 -%}
+                <div class="fs-quote__stars">{% for i in (1..5) %}{% if i <= block.settings.stars %}★{% else %}☆{% endif %}{% endfor %}</div>
+              {%- endif -%}
+              <blockquote class="fs-quote__text" style="margin:0 0 10px">“{{ block.settings.quote }}”</blockquote>
+              <figcaption class="fs-quote__who">— <b>{{ block.settings.name }}</b>{% if block.settings.location != blank %}, {{ block.settings.location }}{% endif %}</figcaption>
+            </figure>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Fresh Seal — Social proof",
+  "tag": "section",
+  "class": "fs-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section title", "default": "Real results, real kitchens" },
+    { "type": "text", "id": "intro", "label": "Intro", "default": "Replace these placeholder numbers with your real stats and reviews." },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 4, "step": 1, "label": "Columns (desktop)", "default": 4 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "accent_color", "label": "Accent (green)", "default": "#2D9D78" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#F5F5F5" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat card",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Big number", "default": "96%" },
+        { "type": "text", "id": "label", "label": "Supporting text", "default": "say food stays fresh longer" }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonial card",
+      "settings": [
+        { "type": "range", "id": "stars", "min": 0, "max": 5, "step": 1, "label": "Star rating (0 = hide)", "default": 5 },
+        { "type": "textarea", "id": "quote", "label": "Quote (use a real review)", "default": "Your customer's real review goes here." },
+        { "type": "text", "id": "name", "label": "Name", "default": "Name" },
+        { "type": "text", "id": "location", "label": "City", "default": "City" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fresh Seal — Social proof",
+      "blocks": [
+        { "type": "stat", "settings": { "number": "96%", "label": "say food stays fresh longer" } },
+        { "type": "stat", "settings": { "number": "5★", "label": "average rating — add your review count" } },
+        { "type": "stat", "settings": { "number": "5,000+", "label": "Fresh Seals in SA kitchens" } },
+        { "type": "testimonial", "settings": { "quote": "Your customer's real review goes here.", "name": "Name", "location": "City" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
