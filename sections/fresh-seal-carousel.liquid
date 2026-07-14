@@ -1,13 +1,15 @@
 {%- comment -%}
-  Fresh Seal — Horizontal scrolling carousel (product range / bundles)
-  CSS scroll-snap. 1.2–1.5 cards on mobile, 3–4 on desktop.
-  Each card can pull live product data (image/title/price) or use manual overrides.
+  Fresh Seal — Horizontal carousel (product range / bundles)
+  A true left→right scroller: peeking cards, CSS scroll-snap, arrow buttons
+  and drag. 1.2–1.5 cards mobile, 3–4 desktop. Each card editable in Shopify.
 {%- endcomment -%}
 
 {%- style -%}
   #shopify-section-{{ section.id }} {
     --fs-accent: {{ section.settings.accent_color }};
     --fs-accent-dark: {{ section.settings.accent_color_dark }};
+    --fs-cta: {{ section.settings.cta_color }};
+    --fs-sale: {{ section.settings.sale_color }};
     --fs-text: {{ section.settings.text_color }};
     --fs-bg: {{ section.settings.bg_color }};
     --fs-card: {{ section.settings.card_color }};
@@ -18,9 +20,21 @@
     padding: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
     font-family: 'Helvetica Neue', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
   }
-  .fs-carousel-{{ section.id }} .fs-car__head { max-width: 40em; margin: 0 0 22px; }
-  .fs-carousel-{{ section.id }} .fs-car__title { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
-  .fs-carousel-{{ section.id }} .fs-car__intro { font-size: 16px; opacity: .8; margin: 0; }
+  .fs-carousel-{{ section.id }} .fs-car__topbar { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 0 0 20px; }
+  .fs-carousel-{{ section.id }} .fs-car__title { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 6px; }
+  .fs-carousel-{{ section.id }} .fs-car__intro { font-size: 15px; opacity: .78; margin: 0; }
+  .fs-carousel-{{ section.id }} .fs-car__arrows { display: none; gap: 8px; flex: none; }
+  .fs-carousel-{{ section.id }} .fs-car__arrow {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.14); background: #fff; color: var(--fs-text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background .15s ease, opacity .15s ease, border-color .15s ease;
+  }
+  .fs-carousel-{{ section.id }} .fs-car__arrow:hover { background: var(--fs-accent); color: #fff; border-color: var(--fs-accent); }
+  .fs-carousel-{{ section.id }} .fs-car__arrow[disabled] { opacity: .3; cursor: default; }
+  .fs-carousel-{{ section.id }} .fs-car__arrow[disabled]:hover { background: #fff; color: var(--fs-text); border-color: rgba(0,0,0,.14); }
+
+  .fs-carousel-{{ section.id }} .fs-car__viewport { position: relative; }
   .fs-carousel-{{ section.id }} .fs-car__track {
     display: flex;
     gap: 16px;
@@ -28,106 +42,180 @@
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 6px 0 16px;
-    scroll-padding-left: 0;
+    padding: 6px 2px 18px;
+    scroll-behavior: smooth;
+    cursor: grab;
   }
+  .fs-carousel-{{ section.id }} .fs-car__track.is-dragging { cursor: grabbing; scroll-behavior: auto; scroll-snap-type: none; }
   .fs-carousel-{{ section.id }} .fs-car__track::-webkit-scrollbar { display: none; }
   .fs-carousel-{{ section.id }} .fs-car__card {
     scroll-snap-align: start;
-    flex: 0 0 78%;
+    flex: 0 0 80%;
     background: var(--fs-card);
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    color: inherit;
+    display: flex; flex-direction: column;
+    text-decoration: none; color: inherit;
     border: 1px solid rgba(0,0,0,.06);
     transition: transform .18s ease, box-shadow .18s ease;
   }
-  .fs-carousel-{{ section.id }} .fs-car__card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.08); }
-  .fs-carousel-{{ section.id }} .fs-car__media { aspect-ratio: 1/1; background: #fff; overflow: hidden; }
+  .fs-carousel-{{ section.id }} .fs-car__card:hover { box-shadow: 0 14px 34px rgba(0,0,0,.09); }
+  .fs-carousel-{{ section.id }} .fs-car__media { position: relative; aspect-ratio: 1/1; background: #fff; overflow: hidden; }
   .fs-carousel-{{ section.id }} .fs-car__media img, .fs-carousel-{{ section.id }} .fs-car__media svg { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .fs-carousel-{{ section.id }} .fs-car__body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .fs-carousel-{{ section.id }} .fs-car__badge { align-self: flex-start; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--fs-accent-dark); background: rgba(45,157,120,.12); padding: 4px 9px; border-radius: 999px; }
-  .fs-carousel-{{ section.id }} .fs-car__name { font-size: 16px; font-weight: 700; margin: 4px 0 0; line-height: 1.3; }
-  .fs-carousel-{{ section.id }} .fs-car__price { display: flex; align-items: baseline; gap: 8px; margin-top: 2px; }
-  .fs-carousel-{{ section.id }} .fs-car__price .now { font-size: 18px; font-weight: 800; color: var(--fs-accent-dark); }
-  .fs-carousel-{{ section.id }} .fs-car__price .was { font-size: 14px; text-decoration: line-through; opacity: .5; }
+  .fs-carousel-{{ section.id }} .fs-car__badge {
+    position: absolute; top: 14px; left: 14px;
+    font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+    color: #fff; background: var(--fs-accent); padding: 7px 13px; border-radius: 8px;
+  }
+  .fs-carousel-{{ section.id }} .fs-car__body { padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .fs-carousel-{{ section.id }} .fs-car__name { font-size: 18px; font-weight: 800; margin: 0; line-height: 1.25; }
+  .fs-carousel-{{ section.id }} .fs-car__stars { color: #f5b301; font-size: 15px; letter-spacing: 1px; }
+  .fs-carousel-{{ section.id }} .fs-car__stars .count { color: rgba(0,0,0,.5); font-size: 13px; margin-left: 4px; }
+  .fs-carousel-{{ section.id }} .fs-car__price { display: flex; align-items: baseline; gap: 9px; }
+  .fs-carousel-{{ section.id }} .fs-car__price .was { font-size: 15px; text-decoration: line-through; opacity: .5; }
+  .fs-carousel-{{ section.id }} .fs-car__price .now { font-size: 21px; font-weight: 800; color: var(--fs-sale); }
+  .fs-carousel-{{ section.id }} .fs-car__save { font-size: 13px; font-weight: 700; opacity: .7; }
   .fs-carousel-{{ section.id }} .fs-car__cta {
     margin-top: auto;
     display: inline-flex; align-items: center; justify-content: center;
-    min-height: 46px; padding: 0 16px;
-    background: var(--fs-accent); color: #fff;
-    font-size: 15px; font-weight: 700; border-radius: 10px;
+    min-height: 50px; padding: 0 18px;
+    background: var(--fs-cta); color: #fff;
+    font-size: 16px; font-weight: 800; border-radius: 12px;
     text-decoration: none; border: none; cursor: pointer;
-    transition: background .18s ease;
+    transition: filter .18s ease;
   }
-  .fs-carousel-{{ section.id }} .fs-car__cta:hover { background: var(--fs-accent-dark); }
-  .fs-carousel-{{ section.id }} .fs-car__hint { font-size: 13px; opacity: .55; margin: 4px 0 0; }
+  .fs-carousel-{{ section.id }} .fs-car__cta:hover { filter: brightness(.92); }
+  .fs-carousel-{{ section.id }} .fs-car__hint { font-size: 13px; opacity: .5; margin: 2px 0 0; text-align: center; }
+
   @media screen and (min-width: 750px) {
-    .fs-carousel-{{ section.id }} .fs-car__title { font-size: 34px; }
-    .fs-carousel-{{ section.id }} .fs-car__card { flex-basis: calc((100% - 48px) / {{ section.settings.cards_desktop }}); }
+    .fs-carousel-{{ section.id }} .fs-car__title { font-size: 32px; }
+    .fs-carousel-{{ section.id }} .fs-car__arrows { display: flex; }
+    .fs-carousel-{{ section.id }} .fs-car__card { flex-basis: calc((100% - {{ section.settings.cards_desktop | minus: 1 | times: 16 }}px) / {{ section.settings.cards_desktop }}); }
     .fs-carousel-{{ section.id }} .fs-car__hint { display: none; }
   }
 {%- endstyle -%}
 
-<div class="fs-carousel-{{ section.id }}">
+<div class="fs-carousel-{{ section.id }}" id="fs-carousel-{{ section.id }}">
   <div class="page-width">
-    <div class="fs-car__head">
-      {%- if section.settings.title != blank -%}<h2 class="fs-car__title">{{ section.settings.title }}</h2>{%- endif -%}
-      {%- if section.settings.intro != blank -%}<p class="fs-car__intro">{{ section.settings.intro }}</p>{%- endif -%}
+    <div class="fs-car__topbar">
+      <div>
+        {%- if section.settings.title != blank -%}<h2 class="fs-car__title">{{ section.settings.title }}</h2>{%- endif -%}
+        {%- if section.settings.intro != blank -%}<p class="fs-car__intro">{{ section.settings.intro }}</p>{%- endif -%}
+      </div>
+      <div class="fs-car__arrows">
+        <button type="button" class="fs-car__arrow" data-dir="prev" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="fs-car__arrow" data-dir="next" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
     </div>
-    <div class="fs-car__track" role="list">
-      {%- for block in section.blocks -%}
-        {%- assign prod = block.settings.product -%}
-        {%- liquid
-          assign card_title = block.settings.title
-          assign card_url = block.settings.link
-          assign card_now = block.settings.price
-          assign card_was = block.settings.compare_price
-          if prod != blank
-            if card_title == blank
-              assign card_title = prod.title
+
+    <div class="fs-car__viewport">
+      <div class="fs-car__track" data-track role="list">
+        {%- for block in section.blocks -%}
+          {%- assign prod = block.settings.product -%}
+          {%- liquid
+            assign card_title = block.settings.title
+            assign card_url = block.settings.link
+            assign card_now = block.settings.price
+            assign card_was = block.settings.compare_price
+            if prod != blank
+              if card_title == blank
+                assign card_title = prod.title
+              endif
+              if card_url == blank
+                assign card_url = prod.url
+              endif
+              if card_now == blank
+                assign card_now = prod.price | money
+              endif
+              if card_was == blank and prod.compare_at_price > prod.price
+                assign card_was = prod.compare_at_price | money
+              endif
             endif
-            if card_url == blank
-              assign card_url = prod.url
-            endif
-            if card_now == blank
-              assign card_now = prod.price | money
-            endif
-            if card_was == blank and prod.compare_at_price > prod.price
-              assign card_was = prod.compare_at_price | money
-            endif
-          endif
-        -%}
-        <a class="fs-car__card" role="listitem" href="{{ card_url | default: '#' }}" {{ block.shopify_attributes }}>
-          <div class="fs-car__media">
-            {%- if block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 78vw', widths: '300, 450, 600, 800', alt: card_title | escape }}
-            {%- elsif prod != blank and prod.featured_image -%}
-              {{ prod.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 78vw', widths: '300, 450, 600, 800', alt: card_title | escape }}
-            {%- else -%}
-              {{ 'product-apparel-2' | placeholder_svg_tag }}
-            {%- endif -%}
-          </div>
-          <div class="fs-car__body">
-            {%- if block.settings.badge != blank -%}<span class="fs-car__badge">{{ block.settings.badge }}</span>{%- endif -%}
-            <h3 class="fs-car__name">{{ card_title | default: 'Product' }}</h3>
-            {%- if card_now != blank -%}
-              <div class="fs-car__price">
-                <span class="now">{{ card_now }}</span>
-                {%- if card_was != blank -%}<span class="was">{{ card_was }}</span>{%- endif -%}
-              </div>
-            {%- endif -%}
-            <span class="fs-car__cta">{{ block.settings.cta_label | default: 'View' }}</span>
-          </div>
-        </a>
-      {%- endfor -%}
+          -%}
+          <a class="fs-car__card" role="listitem" href="{{ card_url | default: '#' }}" {{ block.shopify_attributes }}>
+            <div class="fs-car__media">
+              {%- if block.settings.badge != blank -%}<span class="fs-car__badge">{{ block.settings.badge }}</span>{%- endif -%}
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 80vw', widths: '300, 450, 600, 800', alt: card_title | escape }}
+              {%- elsif prod != blank and prod.featured_image -%}
+                {{ prod.featured_image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 80vw', widths: '300, 450, 600, 800', alt: card_title | escape }}
+              {%- else -%}
+                {{ 'product-apparel-2' | placeholder_svg_tag }}
+              {%- endif -%}
+            </div>
+            <div class="fs-car__body">
+              <h3 class="fs-car__name">{{ card_title | default: 'Product' }}</h3>
+              {%- if block.settings.rating > 0 -%}
+                <div class="fs-car__stars">{% assign r = block.settings.rating | round %}{% for i in (1..5) %}{% if i <= r %}★{% else %}☆{% endif %}{% endfor %}{% if block.settings.reviews != blank %}<span class="count">({{ block.settings.reviews }})</span>{% endif %}</div>
+              {%- endif -%}
+              {%- if card_now != blank -%}
+                <div class="fs-car__price">
+                  {%- if card_was != blank -%}<span class="was">{{ card_was }}</span>{%- endif -%}
+                  <span class="now">{{ card_now }}</span>
+                </div>
+              {%- endif -%}
+              {%- if block.settings.save_line != blank -%}<div class="fs-car__save">{{ block.settings.save_line }}</div>{%- endif -%}
+              <span class="fs-car__cta">{{ block.settings.cta_label | default: 'Add to cart' }}</span>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
     </div>
-    <p class="fs-car__hint">← Swipe to see more →</p>
+    <p class="fs-car__hint">← Swipe to explore →</p>
   </div>
 </div>
+
+<script>
+  (function () {
+    var root = document.getElementById('fs-carousel-{{ section.id }}');
+    if (!root) return;
+    var track = root.querySelector('[data-track]');
+    var prev = root.querySelector('[data-dir="prev"]');
+    var next = root.querySelector('[data-dir="next"]');
+    if (!track) return;
+
+    function step() {
+      var card = track.querySelector('.fs-car__card');
+      if (!card) return track.clientWidth * 0.8;
+      var gap = parseInt(getComputedStyle(track).columnGap || '16', 10) || 16;
+      return card.getBoundingClientRect().width + gap;
+    }
+    function sync() {
+      if (!prev || !next) return;
+      var max = track.scrollWidth - track.clientWidth - 2;
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max;
+    }
+    if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+
+    // drag-to-scroll (desktop mouse)
+    var down = false, startX = 0, startLeft = 0, moved = false;
+    track.addEventListener('mousedown', function (e) {
+      down = true; moved = false; startX = e.pageX; startLeft = track.scrollLeft;
+      track.classList.add('is-dragging');
+    });
+    window.addEventListener('mouseup', function () {
+      if (down) { down = false; track.classList.remove('is-dragging'); }
+    });
+    track.addEventListener('mousemove', function (e) {
+      if (!down) return;
+      var dx = e.pageX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startLeft - dx;
+    });
+    track.addEventListener('click', function (e) {
+      if (moved) { e.preventDefault(); }
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -139,11 +227,13 @@
     { "type": "text", "id": "intro", "label": "Intro", "default": "Bundles and refills — swipe to build your kit." },
     { "type": "range", "id": "cards_desktop", "min": 3, "max": 4, "step": 1, "label": "Cards per screen (desktop)", "default": 3 },
     { "type": "header", "content": "Colours" },
-    { "type": "color", "id": "accent_color", "label": "Accent (green)", "default": "#2D9D78" },
+    { "type": "color", "id": "accent_color", "label": "Accent / badge (green)", "default": "#2D9D78" },
     { "type": "color", "id": "accent_color_dark", "label": "Accent dark", "default": "#248063" },
+    { "type": "color", "id": "cta_color", "label": "Button colour", "default": "#2D9D78" },
+    { "type": "color", "id": "sale_color", "label": "Sale price colour", "default": "#2D9D78" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#FFFFFF" },
-    { "type": "color", "id": "card_color", "label": "Card background", "default": "#F5F5F5" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#F7F5F2" },
     { "type": "header", "content": "Spacing" },
     { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding", "default": 64 },
     { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding", "default": 64 }
@@ -157,9 +247,12 @@
         { "type": "text", "id": "badge", "label": "Badge (optional)", "default": "Best value" },
         { "type": "image_picker", "id": "image", "label": "Image override" },
         { "type": "text", "id": "title", "label": "Title override" },
+        { "type": "range", "id": "rating", "min": 0, "max": 5, "step": 1, "label": "Star rating (0 = hide)", "default": 5 },
+        { "type": "text", "id": "reviews", "label": "Review count", "default": "57" },
         { "type": "text", "id": "price", "label": "Price override", "info": "e.g. R599" },
         { "type": "text", "id": "compare_price", "label": "Compare-at override", "info": "e.g. R999" },
-        { "type": "text", "id": "cta_label", "label": "Button label", "default": "View" },
+        { "type": "text", "id": "save_line", "label": "Save / shipping line", "default": "Save R400 · Free shipping" },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "Add to cart" },
         { "type": "url", "id": "link", "label": "Button link override" }
       ]
     }
@@ -168,10 +261,10 @@
     {
       "name": "Fresh Seal — Carousel",
       "blocks": [
-        { "type": "card", "settings": { "badge": "Best value", "title": "Fresh Seal + 51 Bags", "price": "R599", "compare_price": "R999", "cta_label": "Add to cart" } },
-        { "type": "card", "settings": { "badge": "Top up", "title": "50 Vacuum Bags", "price": "R149", "cta_label": "Add to cart" } },
-        { "type": "card", "settings": { "badge": "Accessory", "title": "Bottle Stopper Set", "price": "R99", "cta_label": "Add to cart" } },
-        { "type": "card", "settings": { "badge": "Refill", "title": "Roll Bag Refill", "price": "R199", "cta_label": "Add to cart" } }
+        { "type": "card", "settings": { "badge": "Best value", "title": "Fresh Seal Ultimate + 51 Bags", "price": "R599", "compare_price": "R999", "save_line": "Save R400 · Free shipping" } },
+        { "type": "card", "settings": { "badge": "Camping bundle", "title": "Fresh Seal Pro + 15 Bags", "price": "R499", "compare_price": "R799", "save_line": "Save R300 · Free shipping" } },
+        { "type": "card", "settings": { "badge": "Top up", "title": "50 Vacuum Bags", "price": "R149", "save_line": "Refill pack", "rating": 0 } },
+        { "type": "card", "settings": { "badge": "Accessory", "title": "Bottle Stopper Set", "price": "R99", "save_line": "For wine, oils & liquids", "rating": 0 } }
       ]
     }
   ]

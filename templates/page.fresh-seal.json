@@ -24,7 +24,7 @@
     "fs_tabs": {
       "type": "fresh-seal-tabbed-comparison",
       "blocks": {
-        "t1": { "type": "list_tab", "settings": {} },
+        "t1": { "type": "text_tab", "settings": {} },
         "t2": { "type": "compare", "settings": {} },
         "t3": { "type": "included", "settings": {} },
         "t4": { "type": "benefits", "settings": {} }
@@ -53,10 +53,10 @@
     "fs_carousel": {
       "type": "fresh-seal-carousel",
       "blocks": {
-        "c1": { "type": "card", "settings": { "badge": "Best value", "title": "Fresh Seal + 51 Bags", "price": "R599", "compare_price": "R999", "cta_label": "Add to cart" } },
-        "c2": { "type": "card", "settings": { "badge": "Top up", "title": "50 Vacuum Bags", "price": "R149", "cta_label": "Add to cart" } },
-        "c3": { "type": "card", "settings": { "badge": "Accessory", "title": "Bottle Stopper Set", "price": "R99", "cta_label": "Add to cart" } },
-        "c4": { "type": "card", "settings": { "badge": "Refill", "title": "Roll Bag Refill", "price": "R199", "cta_label": "Add to cart" } }
+        "c1": { "type": "card", "settings": { "badge": "Best value", "title": "Fresh Seal Ultimate + 51 Bags", "price": "R599", "compare_price": "R999", "save_line": "Save R400 · Free shipping", "rating": 5, "reviews": "136", "cta_label": "Add to cart" } },
+        "c2": { "type": "card", "settings": { "badge": "Camping bundle", "title": "Fresh Seal Pro + 15 Bags", "price": "R499", "compare_price": "R799", "save_line": "Save R300 · Free shipping", "rating": 5, "reviews": "57", "cta_label": "Add to cart" } },
+        "c3": { "type": "card", "settings": { "badge": "Top up", "title": "50 Vacuum Bags", "price": "R149", "save_line": "Refill pack", "rating": 0, "cta_label": "Add to cart" } },
+        "c4": { "type": "card", "settings": { "badge": "Accessory", "title": "Bottle Stopper Set", "price": "R99", "save_line": "For wine, oils & liquids", "rating": 0, "cta_label": "Add to cart" } }
       },
       "block_order": ["c1", "c2", "c3", "c4"],
       "settings": {}
