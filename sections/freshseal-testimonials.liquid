@@ -1,0 +1,121 @@
+{%- comment -%}
+  FreshSeal — Testimonials
+  Big centered title, rounded light-grey cards with yellow stars,
+  bold heading, quote text, italic author, and a black quote bubble
+  in the card's top-right corner. 3 columns desktop, stacked mobile.
+{%- endcomment -%}
+
+{%- style -%}
+  .fstm-{{ section.id }} {
+    background: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    padding: {{ section.settings.padding_top | times: 0.6 | round: 0 }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round: 0 }}px;
+    font-family: 'Helvetica Neue', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+  .fstm-{{ section.id }} .fstm__title {
+    text-align: center;
+    font-size: 34px; font-weight: 800; letter-spacing: -.02em;
+    margin: 0 0 34px;
+  }
+  .fstm-{{ section.id }} .fstm__grid {
+    display: grid; grid-template-columns: 1fr; gap: 18px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .fstm-{{ section.id }} .fstm__card {
+    position: relative;
+    background: {{ section.settings.card_color }};
+    border-radius: 18px;
+    padding: 30px 26px 26px;
+    text-align: center;
+  }
+  .fstm-{{ section.id }} .fstm__bubble {
+    position: absolute; top: 16px; right: 16px;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: {{ section.settings.bubble_color }};
+    color: #ffffff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fstm-{{ section.id }} .fstm__stars {
+    color: {{ section.settings.star_color }};
+    font-size: 17px; letter-spacing: 3px;
+    margin: 0 0 12px; line-height: 1;
+  }
+  .fstm-{{ section.id }} .fstm__heading { font-size: 18px; font-weight: 800; margin: 0 0 10px; }
+  .fstm-{{ section.id }} .fstm__text { font-size: 15px; line-height: 1.6; color: #444444; margin: 0 0 16px; }
+  .fstm-{{ section.id }} .fstm__author { font-size: 13.5px; font-weight: 700; font-style: italic; margin: 0; }
+  @media screen and (min-width: 750px) {
+    .fstm-{{ section.id }} .fstm__title { font-size: 44px; }
+    .fstm-{{ section.id }} .fstm__grid { grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: 24px; }
+    .fstm-{{ section.id }} .fstm__card { padding: 34px 30px 30px; }
+  }
+{%- endstyle -%}
+
+<div class="fstm-{{ section.id }}">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <h2 class="fstm__title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    <div class="fstm__grid">
+      {%- for block in section.blocks -%}
+        <figure class="fstm__card" style="margin:0" {{ block.shopify_attributes }}>
+          <span class="fstm__bubble" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9.6 5C6.6 6.6 4.8 9.2 4.8 12.6c0 3 1.8 5 4.2 5 2 0 3.5-1.5 3.5-3.5S11 10.7 9 10.7c-.3 0-.7 0-1 .1.4-1.8 1.7-3.3 3.5-4.3L9.6 5Zm9 0c-3 1.6-4.8 4.2-4.8 7.6 0 3 1.8 5 4.2 5 2 0 3.5-1.5 3.5-3.5s-1.5-3.4-3.5-3.4c-.3 0-.7 0-1 .1.4-1.8 1.7-3.3 3.5-4.3L18.6 5Z" transform="rotate(180 12 12)"/></svg>
+          </span>
+          {%- if block.settings.stars > 0 -%}
+            <p class="fstm__stars" aria-label="{{ block.settings.stars }} out of 5 stars">{% for i in (1..5) %}{% if i <= block.settings.stars %}★{% else %}☆{% endif %}{% endfor %}</p>
+          {%- endif -%}
+          {%- if block.settings.heading != blank -%}
+            <h3 class="fstm__heading">{{ block.settings.heading }}</h3>
+          {%- endif -%}
+          <blockquote class="fstm__text" style="margin:0 0 16px">{{ block.settings.text }}</blockquote>
+          {%- if block.settings.author != blank -%}
+            <figcaption class="fstm__author">{{ block.settings.author }}</figcaption>
+          {%- endif -%}
+        </figure>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FreshSeal testimonials",
+  "tag": "section",
+  "class": "fs-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section title", "default": "Testimonials" },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 4, "step": 1, "label": "Columns (desktop)", "default": 3 },
+    { "type": "header", "content": "Colours" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_color", "label": "Card background", "default": "#F4F4F4" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
+    { "type": "color", "id": "star_color", "label": "Stars", "default": "#FFC107" },
+    { "type": "color", "id": "bubble_color", "label": "Quote bubble", "default": "#111111" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Top padding", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Bottom padding", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "range", "id": "stars", "min": 0, "max": 5, "step": 1, "label": "Star rating (0 = hide)", "default": 5 },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Heading" },
+        { "type": "textarea", "id": "text", "label": "Quote", "default": "Share positive thoughts and feedback from your customer.." },
+        { "type": "text", "id": "author", "label": "Author", "default": "Author" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FreshSeal testimonials",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}
