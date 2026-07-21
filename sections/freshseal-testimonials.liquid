@@ -48,6 +48,11 @@
     .fstm-{{ section.id }} .fstm__grid { grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr); gap: 24px; }
     .fstm-{{ section.id }} .fstm__card { padding: 34px 30px 30px; }
   }
+  @media screen and (max-width: 480px) {
+    .fstm-{{ section.id }} .fstm__title { font-size: 28px; margin-bottom: 24px; }
+    .fstm-{{ section.id }} .fstm__card { padding: 26px 22px 24px; }
+    .fstm-{{ section.id }} .fstm__text { font-size: 14.5px; }
+  }
 {%- endstyle -%}
 
 <div class="fstm-{{ section.id }}">

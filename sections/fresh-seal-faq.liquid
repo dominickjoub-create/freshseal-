@@ -31,6 +31,11 @@
   @media screen and (min-width: 750px) {
     .fs-faq-{{ section.id }} .fs-faq__title { font-size: 34px; }
   }
+  @media screen and (max-width: 480px) {
+    .fs-faq-{{ section.id }} .fs-faq__title { font-size: 24px; margin-bottom: 20px; }
+    .fs-faq-{{ section.id }} summary { font-size: 15px; padding: 16px 16px; }
+    .fs-faq-{{ section.id }} .fs-faq__answer { padding: 0 16px 18px; font-size: 14.5px; }
+  }
 {%- endstyle -%}
 
 <div class="fs-faq-{{ section.id }}" id="fs-faq-{{ section.id }}">

@@ -121,6 +121,16 @@
     .fs-hero-{{ section.id }} .fs-hero__title { font-size: 46px; }
     .fs-hero-{{ section.id }} .fs-hero__sub { font-size: 18px; }
   }
+  @media screen and (max-width: 480px) {
+    .fs-hero-{{ section.id }} .fs-hero__grid { gap: 22px; }
+    .fs-hero-{{ section.id }} .fs-hero__title { font-size: 28px; line-height: 1.15; }
+    .fs-hero-{{ section.id }} .fs-hero__sub { font-size: 15.5px; margin-bottom: 20px; }
+    .fs-hero-{{ section.id }} .fs-hero__price .now { font-size: 26px; }
+    .fs-hero-{{ section.id }} .fs-hero__price .was { font-size: 16px; }
+    .fs-hero-{{ section.id }} .fs-hero__cta { max-width: none; }
+    .fs-hero-{{ section.id }} .fs-hero__trust { gap: 8px 16px; }
+    .fs-hero-{{ section.id }} .fs-hero__trust li { font-size: 13px; }
+  }
 {%- endstyle -%}
 
 <div class="fs-hero-{{ section.id }}">

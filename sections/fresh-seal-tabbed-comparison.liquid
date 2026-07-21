@@ -108,6 +108,18 @@
     .fs-tabs-{{ section.id }} .fs-tabs__title { font-size: 32px; }
     .fs-tabs-{{ section.id }} .fs-tabs__btn { flex: 1 1 0; }
   }
+  @media screen and (max-width: 480px) {
+    .fs-tabs-{{ section.id }} .fs-tabs__title { font-size: 23px; }
+    .fs-tabs-{{ section.id }} .fs-tabs__intro { font-size: 14px; }
+    .fs-tabs-{{ section.id }} .fs-tabs__btn { min-height: 48px; padding: 6px 14px; font-size: 13.5px; }
+    .fs-tabs-{{ section.id }} .fs-tabs__body { padding: 22px 16px 24px; }
+    .fs-tabs-{{ section.id }} .fs-panel-heading { font-size: 19px; }
+    .fs-tabs-{{ section.id }} .fs-panel-text { font-size: 15.5px; }
+    .fs-tabs-{{ section.id }} .fs-cmp { font-size: 14px; }
+    .fs-tabs-{{ section.id }} .fs-cmp th, .fs-tabs-{{ section.id }} .fs-cmp td { padding: 13px 5px; }
+    .fs-tabs-{{ section.id }} .fs-inc li, .fs-tabs-{{ section.id }} .fs-ben li { font-size: 15.5px; }
+    .fs-tabs-{{ section.id }} .fs-ben li { gap: 12px; }
+  }
 {%- endstyle -%}
 
 <div class="fs-tabs-{{ section.id }}" id="fs-tabs-{{ section.id }}">

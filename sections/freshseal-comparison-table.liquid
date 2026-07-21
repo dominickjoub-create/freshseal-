@@ -61,6 +61,14 @@
     .fsct-{{ section.id }} .fsct__text { text-align: left; }
     .fsct-{{ section.id }} .fsct__tablewrap { margin: 0 0 0 auto; }
   }
+  @media screen and (max-width: 480px) {
+    .fsct-{{ section.id }} .fsct__grid { gap: 24px; }
+    .fsct-{{ section.id }} .fsct__title { font-size: 28px; }
+    .fsct-{{ section.id }} .fsct__text { font-size: 14.5px; }
+    .fsct-{{ section.id }} .fsct__table thead th { font-size: 13px; padding-bottom: 10px; }
+    .fsct-{{ section.id }} .fsct__table td { padding: 12px 6px; }
+    .fsct-{{ section.id }} .fsct__table td.benefit { font-size: 13px; padding: 12px 12px; width: 46%; }
+  }
 {%- endstyle -%}
 
 <div class="fsct-{{ section.id }}">

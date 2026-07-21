@@ -74,6 +74,14 @@
   @media screen and (min-width: 750px) {
     .fs-bundle-{{ section.id }} .fs-bundle__title { font-size: 30px; }
   }
+  @media screen and (max-width: 480px) {
+    .fs-bundle-{{ section.id }} .fs-bundle__card { padding: 22px 18px 24px; border-radius: 16px; }
+    .fs-bundle-{{ section.id }} .fs-bundle__title { font-size: 22px; }
+    .fs-bundle-{{ section.id }} .fs-bundle__desc { font-size: 14px; }
+    .fs-bundle-{{ section.id }} .fs-bundle__price .now { font-size: 28px; }
+    .fs-bundle-{{ section.id }} .fs-bundle__total b { font-size: 22px; }
+    .fs-bundle-{{ section.id }} .fs-bundle__cta { font-size: 16px; min-height: 54px; padding: 0 16px; }
+  }
 {%- endstyle -%}
 
 <div class="fs-bundle-{{ section.id }}" id="fs-bundle">

@@ -38,6 +38,14 @@
     .fs-modes-{{ section.id }} .fs-modes__grid { grid-template-columns: repeat(4, 1fr); gap: 18px; }
     .fs-modes-{{ section.id }} .fs-mode { padding: 30px 22px; }
   }
+  @media screen and (max-width: 480px) {
+    .fs-modes-{{ section.id }} .fs-modes__title { font-size: 23px; }
+    .fs-modes-{{ section.id }} .fs-modes__head { margin-bottom: 22px; }
+    .fs-modes-{{ section.id }} .fs-modes__grid { gap: 10px; }
+    .fs-modes-{{ section.id }} .fs-mode { padding: 20px 14px; }
+    .fs-modes-{{ section.id }} .fs-mode__icon { width: 46px; height: 46px; margin-bottom: 12px; }
+    .fs-modes-{{ section.id }} .fs-mode__desc { font-size: 13px; }
+  }
 {%- endstyle -%}
 
 <div class="fs-modes-{{ section.id }}">

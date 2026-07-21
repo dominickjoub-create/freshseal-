@@ -108,8 +108,15 @@
     display: flex; align-items: center; justify-content: center;
   }
   @media screen and (max-width: 480px) {
-    .fspc-{{ section.id }} .fspc__tab { padding: 8px 14px; font-size: 13.5px; }
-    .fspc-{{ section.id }} .fspc__panel { padding: 24px 18px 26px; }
+    .fspc-{{ section.id }} .fspc__tab { padding: 8px 13px; font-size: 13px; min-height: 48px; }
+    .fspc-{{ section.id }} .fspc__panel { padding: 22px 16px 24px; }
+    .fspc-{{ section.id }} .fspc__text { font-size: 15px; }
+    .fspc-{{ section.id }} .fspc__cmp td:first-child { font-size: 13.5px; padding-right: 4px; }
+    .fspc-{{ section.id }} .fspc__cmp td, .fspc-{{ section.id }} .fspc__cmp th { padding-left: 4px; padding-right: 4px; }
+    .fspc-{{ section.id }} .fspc__usname, .fspc-{{ section.id }} .fspc__themname { font-size: 14px; }
+    .fspc-{{ section.id }} .fspc__uslogo { padding: 8px 10px; }
+    .fspc-{{ section.id }} .fspc__inc li, .fspc-{{ section.id }} .fspc__ben li { font-size: 15px; }
+    .fspc-{{ section.id }} .fspc__ben li { gap: 12px; }
   }
 {%- endstyle -%}
 
