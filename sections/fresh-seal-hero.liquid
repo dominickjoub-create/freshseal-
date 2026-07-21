@@ -96,6 +96,8 @@
   }
   .fs-hero-{{ section.id }} .fs-hero__cta:hover { background: var(--fs-accent-dark); }
   .fs-hero-{{ section.id }} .fs-hero__cta:active { transform: translateY(1px); }
+  .fs-hero-{{ section.id }} .fs-hero__cta[aria-busy="true"] { opacity: .7; pointer-events: none; }
+  .fs-hero-{{ section.id }} .fs-hero__form { width: 100%; max-width: 420px; margin: 0; }
   .fs-hero-{{ section.id }} .fs-hero__trust {
     list-style: none;
     padding: 0;
@@ -128,6 +130,7 @@
     .fs-hero-{{ section.id }} .fs-hero__price .now { font-size: 26px; }
     .fs-hero-{{ section.id }} .fs-hero__price .was { font-size: 16px; }
     .fs-hero-{{ section.id }} .fs-hero__cta { max-width: none; }
+    .fs-hero-{{ section.id }} .fs-hero__form { max-width: none; }
     .fs-hero-{{ section.id }} .fs-hero__trust { gap: 8px 16px; }
     .fs-hero-{{ section.id }} .fs-hero__trust li { font-size: 13px; }
   }
@@ -165,8 +168,23 @@
             {%- if section.settings.save_label != blank -%}<span class="save">{{ section.settings.save_label }}</span>{%- endif -%}
           </div>
         {%- endif -%}
+        {%- liquid
+          assign hero_product = section.settings.product
+          assign hero_vid = ''
+          if hero_product != blank and hero_product.available
+            assign hero_vid = hero_product.selected_or_first_available_variant.id
+          endif
+        -%}
         {%- if section.settings.cta_label != blank -%}
-          <a href="{{ section.settings.cta_link | default: '#fs-bundle' }}" class="fs-hero__cta">{{ section.settings.cta_label }}</a>
+          {%- if hero_vid != blank -%}
+            <form class="fs-hero__form" action="{{ routes.cart_add_url }}" method="post" data-fs-cart-form>
+              <input type="hidden" name="id" value="{{ hero_vid }}">
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="fs-hero__cta" data-fs-cart-btn>{{ section.settings.cta_label }}</button>
+            </form>
+          {%- else -%}
+            <a href="{{ section.settings.cta_link | default: '#fs-bundle' }}" class="fs-hero__cta">{{ section.settings.cta_label }}</a>
+          {%- endif -%}
         {%- endif -%}
         {%- if section.blocks.size > 0 -%}
           <ul class="fs-hero__trust">
@@ -182,6 +200,31 @@
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    var form = document.querySelector('#shopify-section-{{ section.id }} [data-fs-cart-form]');
+    if (!form) return;
+    var btn = form.querySelector('[data-fs-cart-btn]');
+    var label = btn ? btn.textContent : '';
+    form.addEventListener('submit', function (e) {
+      if (!window.fetch) return; // no JS enhancement → native form post still works
+      e.preventDefault();
+      if (btn) { btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Adding…'; }
+      fetch('{{ routes.cart_add_url }}.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: form.querySelector('[name="id"]').value, quantity: 1 })
+      })
+      .then(function (r) { if (!r.ok) throw new Error('add failed'); return r.json(); })
+      .then(function () {
+        document.dispatchEvent(new CustomEvent('fs:added'));
+        window.location.href = '{{ routes.cart_url }}';
+      })
+      .catch(function () { form.submit(); });
+    });
+  })();
+</script>
 
 {% schema %}
 {
@@ -199,8 +242,9 @@
     { "type": "text", "id": "price_now", "label": "Price", "default": "R599" },
     { "type": "text", "id": "price_was", "label": "Compare-at price", "default": "R799" },
     { "type": "text", "id": "save_label", "label": "Savings badge", "default": "Machine + 51 bags" },
+    { "type": "product", "id": "product", "label": "Product to add to cart", "info": "Pick your main product so the button really adds to cart. Leave blank to make it a link instead." },
     { "type": "text", "id": "cta_label", "label": "Button label", "default": "Add to cart — R599" },
-    { "type": "url", "id": "cta_link", "label": "Button link", "info": "Leave blank to jump to the bundle section (#fs-bundle)." },
+    { "type": "url", "id": "cta_link", "label": "Button link (only used if no product picked)", "info": "Leave blank to jump to the bundle section (#fs-bundle)." },
     { "type": "header", "content": "Colours" },
     { "type": "color", "id": "accent_color", "label": "Accent (green)", "default": "#2D9D78" },
     { "type": "color", "id": "accent_color_dark", "label": "Accent hover", "default": "#1e7d5f" },

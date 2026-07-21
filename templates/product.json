@@ -89,34 +89,6 @@
       ],
       "settings": {}
     },
-    "fs_tabs": {
-      "type": "fresh-seal-tabbed-comparison",
-      "blocks": {
-        "t1": {
-          "type": "text_tab",
-          "settings": {}
-        },
-        "t2": {
-          "type": "compare",
-          "settings": {}
-        },
-        "t3": {
-          "type": "included",
-          "settings": {}
-        },
-        "t4": {
-          "type": "benefits",
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "t1",
-        "t2",
-        "t3",
-        "t4"
-      ],
-      "settings": {}
-    },
     "fs_modes": {
       "type": "fresh-seal-modes",
       "blocks": {
@@ -296,15 +268,112 @@
         "f4"
       ],
       "settings": {}
+    },
+    "fs_compare": {
+      "type": "freshseal-product-compare",
+      "blocks": {
+        "a": {
+          "type": "text_tab",
+          "settings": {}
+        },
+        "b": {
+          "type": "compare",
+          "settings": {}
+        },
+        "c": {
+          "type": "included",
+          "settings": {}
+        },
+        "d": {
+          "type": "benefits",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "settings": {}
+    },
+    "fs_cmptable": {
+      "type": "freshseal-comparison-table",
+      "blocks": {
+        "r1": {
+          "type": "row",
+          "settings": {
+            "label": "Works with any bag or roll",
+            "us": true,
+            "them": false
+          }
+        },
+        "r2": {
+          "type": "row",
+          "settings": {
+            "label": "4-in-1 modes",
+            "us": true,
+            "them": false
+          }
+        },
+        "r3": {
+          "type": "row",
+          "settings": {
+            "label": "12-month SA warranty",
+            "us": true,
+            "them": false
+          }
+        },
+        "r4": {
+          "type": "row",
+          "settings": {
+            "label": "Proprietary bags only",
+            "us": false,
+            "them": true
+          }
+        }
+      },
+      "block_order": [
+        "r1",
+        "r2",
+        "r3",
+        "r4"
+      ],
+      "settings": {}
+    },
+    "fs_testi": {
+      "type": "freshseal-testimonials",
+      "blocks": {
+        "t1": {
+          "type": "testimonial",
+          "settings": {}
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {}
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {}
     }
   },
   "order": [
     "main",
     "fs_trust",
-    "fs_tabs",
+    "fs_compare",
     "fs_modes",
+    "fs_cmptable",
     "fs_bundle",
     "fs_proof",
+    "fs_testi",
     "fs_carousel",
     "fs_faq"
   ]

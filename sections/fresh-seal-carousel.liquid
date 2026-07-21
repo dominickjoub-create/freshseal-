@@ -60,7 +60,12 @@
     transition: transform .18s ease, box-shadow .18s ease;
   }
   .fs-carousel-{{ section.id }} .fs-car__card:hover { box-shadow: 0 14px 34px rgba(0,0,0,.09); }
-  .fs-carousel-{{ section.id }} .fs-car__media { position: relative; aspect-ratio: 1/1; background: #fff; overflow: hidden; }
+  .fs-carousel-{{ section.id }} .fs-car__namelink { color: inherit; text-decoration: none; }
+  .fs-carousel-{{ section.id }} .fs-car__namelink:hover { text-decoration: underline; }
+  .fs-carousel-{{ section.id }} .fs-car__form { margin: auto 0 0; display: flex; }
+  .fs-carousel-{{ section.id }} .fs-car__form .fs-car__cta { width: 100%; margin-top: 0; }
+  .fs-carousel-{{ section.id }} .fs-car__cta[aria-busy="true"] { opacity: .7; pointer-events: none; }
+  .fs-carousel-{{ section.id }} .fs-car__media { position: relative; aspect-ratio: 1/1; background: #fff; overflow: hidden; display: block; }
   .fs-carousel-{{ section.id }} .fs-car__media img, .fs-carousel-{{ section.id }} .fs-car__media svg { width: 100%; height: 100%; object-fit: cover; display: block; }
   .fs-carousel-{{ section.id }} .fs-car__badge {
     position: absolute; top: 14px; left: 14px;
@@ -141,6 +146,7 @@
             assign card_url = block.settings.link
             assign card_now = block.settings.price
             assign card_was = block.settings.compare_price
+            assign card_vid = ''
             if prod != blank
               if card_title == blank
                 assign card_title = prod.title
@@ -154,10 +160,13 @@
               if card_was == blank and prod.compare_at_price > prod.price
                 assign card_was = prod.compare_at_price | money
               endif
+              if prod.available
+                assign card_vid = prod.selected_or_first_available_variant.id
+              endif
             endif
           -%}
-          <a class="fs-car__card" role="listitem" href="{{ card_url | default: '#' }}" {{ block.shopify_attributes }}>
-            <div class="fs-car__media">
+          <div class="fs-car__card" role="listitem" {{ block.shopify_attributes }}>
+            <a class="fs-car__media" href="{{ card_url | default: '#' }}"{% if card_url == blank %} tabindex="-1" aria-hidden="true"{% endif %}>
               {%- if block.settings.badge != blank -%}<span class="fs-car__badge">{{ block.settings.badge }}</span>{%- endif -%}
               {%- if block.settings.image != blank -%}
                 {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 25vw, 80vw', widths: '300, 450, 600, 800', alt: card_title | escape }}
@@ -166,9 +175,9 @@
               {%- else -%}
                 {{ 'product-apparel-2' | placeholder_svg_tag }}
               {%- endif -%}
-            </div>
+            </a>
             <div class="fs-car__body">
-              <h3 class="fs-car__name">{{ card_title | default: 'Product' }}</h3>
+              <h3 class="fs-car__name"><a href="{{ card_url | default: '#' }}" class="fs-car__namelink">{{ card_title | default: 'Product' }}</a></h3>
               {%- if block.settings.components != blank -%}
                 <ul class="fs-car__parts">
                   {%- assign comps = block.settings.components | newline_to_br | split: '<br />' -%}
@@ -196,9 +205,17 @@
                 </div>
               {%- endif -%}
               {%- if block.settings.save_line != blank -%}<div class="fs-car__save">{{ block.settings.save_line }}</div>{%- endif -%}
-              <span class="fs-car__cta">{{ block.settings.cta_label | default: 'Add to cart' }} <span aria-hidden="true">→</span></span>
+              {%- if card_vid != blank -%}
+                <form class="fs-car__form" action="{{ routes.cart_add_url }}" method="post" data-fs-cart-form>
+                  <input type="hidden" name="id" value="{{ card_vid }}">
+                  <input type="hidden" name="quantity" value="1">
+                  <button type="submit" class="fs-car__cta" data-fs-cart-btn>{{ block.settings.cta_label | default: 'Add to cart' }} <span aria-hidden="true">→</span></button>
+                </form>
+              {%- else -%}
+                <a class="fs-car__cta" href="{{ card_url | default: '#' }}">{{ block.settings.cta_label | default: 'View' }} <span aria-hidden="true">→</span></a>
+              {%- endif -%}
             </div>
-          </a>
+          </div>
         {%- endfor -%}
       </div>
     </div>
@@ -251,6 +268,26 @@
     track.addEventListener('click', function (e) {
       if (moved) { e.preventDefault(); }
     });
+
+    // AJAX add-to-cart for each card
+    root.querySelectorAll('[data-fs-cart-form]').forEach(function (form) {
+      var btn = form.querySelector('[data-fs-cart-btn]');
+      var label = btn ? btn.innerHTML : '';
+      form.addEventListener('submit', function (e) {
+        if (moved) { e.preventDefault(); return; }
+        if (!window.fetch) return; // native form post still works without JS
+        e.preventDefault();
+        if (btn) { btn.setAttribute('aria-busy', 'true'); btn.textContent = 'Adding…'; }
+        fetch('{{ routes.cart_add_url }}.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ id: form.querySelector('[name="id"]').value, quantity: 1 })
+        })
+        .then(function (r) { if (!r.ok) throw new Error('add failed'); return r.json(); })
+        .then(function () { window.location.href = '{{ routes.cart_url }}'; })
+        .catch(function () { form.submit(); });
+      });
+    });
   })();
 </script>
 
@@ -280,7 +317,7 @@
       "type": "card",
       "name": "Product card",
       "settings": [
-        { "type": "product", "id": "product", "label": "Product", "info": "Pulls image, title and price automatically. Fields below override it." },
+        { "type": "product", "id": "product", "label": "Product", "info": "Required for the Add to cart button to work — it pulls image, title and price, and adds this product to the cart. Without a product the button becomes a link. Fields below override the display values." },
         { "type": "text", "id": "badge", "label": "Badge (optional)", "default": "Best value" },
         { "type": "image_picker", "id": "image", "label": "Image override" },
         { "type": "text", "id": "title", "label": "Title override" },
